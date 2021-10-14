@@ -1,16 +1,37 @@
 # my_app
 
-A new Flutter project.
+A new Flutter project BLoC Example
 
-## Getting Started
+    enum CounterAction { Increment, Decrement, Reset }
 
-This project is a starting point for a Flutter application.
+    class CounterBloc {
+      int counter = 0;
+      final _stateStreamController = StreamController<int>();
+      StreamSink<int> get counterSink => _stateStreamController.sink;
+      Stream<int> get counterStream => _stateStreamController.stream;
 
-A few resources to get you started if this is your first Flutter project:
+      final _eventStreamController = StreamController<CounterAction>();
+      StreamSink<CounterAction> get eventSink => _eventStreamController.sink;
+      Stream<CounterAction> get eventStream => _eventStreamController.stream;
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+      CounterBloc() {
+      // counter = 0;
+        eventStream.listen((event) {
+          if (event == CounterAction.Increment) {
+            counter++;
+            } else if (event == CounterAction.Decrement) {
+            counter++;
+           } else if (event == CounterAction.Reset) {
+            counter = 0;
+         }
+          counterSink.add(counter);
+        });
+      }
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+      void dispose() {
+        _stateStreamController.close();
+       _eventStreamController.close();
+      }
+    }
+
+
